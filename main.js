@@ -3,7 +3,9 @@ let remotestram;
 let peerConnection;
 const servers = {
     iceServers: [
-        url
+        {
+            urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302']
+        }
     ]
 }
 
@@ -19,9 +21,14 @@ let init = async () => {
 
 
 let createOffer = async () => {
-    peerConnection = new RTCPeerConnection();
+    peerConnection = new RTCPeerConnection(servers);
     remotestram = new MediaStream();
-    document.getElementById('user-2').srcObject = localstram;
+    document.getElementById('user-2').srcObject = remotestram;
+
+    localstram.getTracks().forEach((track) => {
+        peerConnection.addTrack(track, localstram);
+    })
+
 
     let offer = await peerConnection.createOffer();
     await peerConnection.setLocalDescription(offer);
