@@ -28,6 +28,17 @@ let createOffer = async () => {
     localstram.getTracks().forEach((track) => {
         peerConnection.addTrack(track, localstram);
     })
+    peerConnection.ontrack = (event) => {
+        event.streams[0].getTracks().forEach((track) => {
+            remotestram.track();
+        })
+    }
+
+    peerConnection.onicecandidate = async (event) => {
+        if (event.candidate) {
+            console.log('New Ice Candidate', event.candidate);
+        }
+    }
 
 
     let offer = await peerConnection.createOffer();
